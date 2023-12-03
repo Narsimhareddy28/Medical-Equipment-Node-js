@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .update-form-modal {
+      display: none;
+      position: fixed;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgb(200, 193, 193);
+      width: 50%;
+      padding: 20px;
+      z-index: 1000;
+      height: 50%;
+    }
+    nav {
+      background-color: #333;
+      overflow: hidden;
+    }
+
+    nav a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/manager-dashboard">Dashboard</a>
+    <a href="/customer-list">Customer List</a>
+    <a href="/payment-report">Payment Report</a>
+    <a href="/pending-payment-report">Pending Payment Report</a>
+    <a href="/profit-report">Profit Report</a> <!-- Link to the profit report page -->
+</nav>
+  <h2>Welcome to the Manager Dashboard!</h2>
+
+  <h3>Equipment List</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>Rent Price per Day</th>
+        <th>Quantity in Store</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% equipment.forEach(equipmentItem => { %>
+        <tr>
+          <td><%= equipmentItem.name %></td>
+          <td><%= equipmentItem.manufacturer %></td>
+          <td><%= equipmentItem.description %></td>
+          <td><%= equipmentItem.rent_price_per_day %></td>
+          <td><%= equipmentItem.quantity_in_store %></td>
+          <td>
+            <!-- Button to open the update form in a modal -->
+            <button onclick="openUpdateForm(
+              '<%= equipmentItem.equipment_id %>', 
+              '<%= equipmentItem.name %>', 
+              '<%= equipmentItem.description %>', 
+              '<%= equipmentItem.rent_price_per_day %>', 
+              '<%= equipmentItem.quantity_in_store %>'
+            )">Update</button>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+  <!-- Update Equipment Form (initially hidden) -->
+  <div id="updateFormModal" class="update-form-modal">
+    <h3>Update Equipment</h3>
+    <form method="post" action="/update-equipment">
+      <input type="hidden" id="updateEquipmentId" name="equipment_id" value="">
+      <label for="updateName">Name:</label>
+      <input type="text" id="updateName" name="name" required>
+      <label for="updateDescription">Description:</label>
+      <textarea id="updateDescription" name="description" required></textarea>
+      <label for="updateRentPrice">Rent Price per Day:</label>
+      <input type="text" id="updateRentPrice" name="rent_price_per_day" required>
+      <label for="updateQuantity">Quantity in Store:</label>
+      <input type="text" id="updateQuantity" name="quantity_in_store" required>
+      <button type="button" onclick="closeUpdateForm()">Close</button>
+
+      <button type="submit">Update</button>
+    </form>
+  </div>
+
+  <!-- Add Equipment Form -->
+    <h3>Add Equipment</h3>
+    <form method="post" action="/add-equipment">
+      <label for="addName">Name:</label>
+      <input type="text" id="addName" name="name" required>
+      <label for="addManufacturer">Manufacturer:</label>
+      <input type="text" id="addManufacturer" name="manufacturer" required>
+      <label for="addDescription">Description:</label>
+      <textarea id="addDescription" name="description" required></textarea>
+      <label for="addRentPrice">Rent Price per Day:</label>
+      <input type="text" id="addRentPrice" name="rent_price_per_day" required>
+      <label for="addQuantity">Quantity in Store:</label>
+      <input type="text" id="addQuantity" name="quantity_in_store" required>
+      <label for="addSupplierId">Supplier ID:</label>
+      <input type="text" id="addSupplierId" name="supplier_id" required>
+      <button type="submit">Add</button>
+    </form>
+  </div>
+
+
+
+
+  <div id="rentFormContainer">
+    <h3>Take Order</h3>
+    <form method="post" action="/take-order">
+      <label for="client">Client:</label>
+    <select name="client_id" id="client" required>
+      <% clients.forEach(client => { %>
+        <option value="<%= client.client_id %>"><%= client.name %></option>
+      <% }); %>
+    </select>
+      <label for="equipment_id">Select Equipment:</label>
+      <select name="equipment_id" id="equipmentSelect" required>
+        <% equipment.forEach(equipmentItem => { %>
+        <option value="<%= equipmentItem.equipment_id %>" data-quantity="<%= equipmentItem.quantity_in_store %>" data-rent-price="<%= equipmentItem.rent_price_per_day %>"><%= equipmentItem.name %></option>
+        <% }); %>
+      </select>
+
+      <label for="quantity">Quantity (Available: <span id="availableQuantity">0</span>):</label>
+      <input type="number" name="quantity" id="quantityInput" min="1" max="1" value="1" required>
+
+      <label for="start_date">Start Date:</label>
+      <input type="date" name="start_date" id="startDateInput" required>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" name="end_date" id="endDateInput" required>
+
+      <label for="total_amount">Total Amount:</label>
+      <input type="text" name="total_amount" id="totalAmount" readonly>
+
+      <label for="amount_paid">Amount Paid:</label>
+      <input type="number" name="amount_paid" min="0" step="0.01" placeholder="0.00" required>
+
+      <button type="submit">Rent</button>
+    </form>
+  </div>
+
+
+  <script>
+    function showRentForm(equipmentId) {
+      // Set the selected equipment id in the form
+      document.querySelector('#equipmentSelect').value = equipmentId;
+
+      // Show the rent form container
+      document.getElementById('rentFormContainer').style.display = 'block';
+    }
+
+    // Update available quantity and calculate total amount when equipment is selected
+    document.getElementById('equipmentSelect').addEventListener('change', updateQuantityAndTotal);
+
+    // Update total amount when dates are selected
+    document.getElementById('startDateInput').addEventListener('input', updateQuantityAndTotal);
+    document.getElementById('endDateInput').addEventListener('input', updateQuantityAndTotal);
+
+    // Initial update on page load
+    updateQuantityAndTotal();
+
+    function updateQuantityAndTotal() {
+      const selectedOption = document.getElementById('equipmentSelect').options[document.getElementById('equipmentSelect').selectedIndex];
+      const availableQuantity = selectedOption.getAttribute('data-quantity');
+      const rentPricePerDay = selectedOption.getAttribute('data-rent-price');
+      const startDate = new Date(document.getElementById('startDateInput').value);
+      const endDate = new Date(document.getElementById('endDateInput').value);
+
+      // Update available quantity
+      document.getElementById('availableQuantity').textContent = availableQuantity;
+      document.getElementById('quantityInput').max = availableQuantity;
+
+      // Calculate total amount
+      const numberOfDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const totalAmount = (numberOfDays > 0) ? (numberOfDays * rentPricePerDay * document.getElementById('quantityInput').value).toFixed(2) : 0;
+
+      // Update total amount field
+      document.getElementById('totalAmount').value = totalAmount;
+    }
+  </script>
+
+
+
+  <script>
+    // Function to open the update form with equipment details
+    function openUpdateForm(equipmentId, name, description, rentPrice, quantity) {
+      document.getElementById('updateEquipmentId').value = equipmentId;
+      document.getElementById('updateName').value = name;
+      document.getElementById('updateDescription').value = description;
+      document.getElementById('updateRentPrice').value = rentPrice;
+      document.getElementById('updateQuantity').value = quantity;
+      document.getElementById('updateFormModal').style.display = 'block';
+    }
+
+    // Function to open the add form
+    function openAddForm() {
+      document.getElementById('addFormModal').style.display = 'block';
+    }
+    function closeUpdateForm() {
+      document.getElementById('updateFormModal').style.display = 'none';
+    }
+  </script>
+  <!-- JavaScript to calculate total amount based on quantity and days -->
+
+
+</body>
+</html>

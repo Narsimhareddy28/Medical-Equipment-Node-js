@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Dashboard</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    /* Styling for the popup container */
+    #rentFormContainer {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Welcome to the Client Dashboard!</h2>
+  <form method="post" action="/logout" style="text-align: right; margin-bottom: 10px;">
+    <button type="submit">Logout</button>
+  </form>
+  
+
+  <!-- Rent Equipment Form (hidden by default) -->
+  <div id="rentFormContainer">
+    <h3>Rent Equipment</h3>
+    <form method="post" action="/rent">
+      <label for="equipment_id">Select Equipment:</label>
+      <select name="equipment_id" id="equipmentSelect" required>
+        <% equipment.forEach(equipmentItem => { %>
+        <option value="<%= equipmentItem.equipment_id %>" data-quantity="<%= equipmentItem.quantity_in_store %>" data-rent-price="<%= equipmentItem.rent_price_per_day %>"><%= equipmentItem.name %></option>
+        <% }); %>
+      </select>
+
+      <label for="quantity">Quantity (Available: <span id="availableQuantity">0</span>):</label>
+      <input type="number" name="quantity" id="quantityInput" min="1" max="1" value="1" required>
+
+      <label for="start_date">Start Date:</label>
+      <input type="date" name="start_date" id="startDateInput" required>
+
+      <label for="end_date">End Date:</label>
+      <input type="date" name="end_date" id="endDateInput" required>
+
+      <label for="total_amount">Total Amount:</label>
+      <input type="text" name="total_amount" id="totalAmount" readonly>
+
+      <label for="amount_paid">Amount Paid:</label>
+      <input type="number" name="amount_paid" min="0" step="0.01" placeholder="0.00" required>
+
+      <button type="submit">Rent</button>
+    </form>
+  </div>
+
+  <!-- List of Available Equipment -->
+  <h3>Available Equipment</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>Rent Price per Day</th>
+        <th>Quantity in Store</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% equipment.forEach(equipmentItem => { %>
+      <tr>
+        <td><%= equipmentItem.name %></td>
+        <td><%= equipmentItem.manufacturer %></td>
+        <td><%= equipmentItem.description %></td>
+        <td><%= equipmentItem.rent_price_per_day %></td>
+        <td><%= equipmentItem.quantity_in_store %></td>
+        <td>
+          <button onclick="showRentForm('<%= equipmentItem.equipment_id %>')">Rent</button>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+<!-- unavailable -->
+  <h3>Unavailable Equipment</h3>
+  <table>
+    <!-- Header row ... -->
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Manufacturer</th>
+        <th>Description</th>
+        <th>Next Available Date</th>
+      </tr>
+    </thead>
+  
+    <!-- Table body ... -->
+    <tbody>
+        <% equipment2.forEach(equipmentItem => { %>
+            <tr>
+          <td><%= equipmentItem.name %></td>
+          <td><%= equipmentItem.manufacturer %></td>
+          <td><%= equipmentItem.description %></td>
+          <td><%= equipmentItem.description %></td>
+
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  <!-- Existing code for displaying available equipment -->
+
+<!-- Order History -->
+<h3>Order History</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Equipment Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Quantity</th>
+            <th>Total Price</th>
+            <th>Amount Paid</th>
+            <th>Payment Date</th>
+            <th>Receipt</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <% orders.forEach(order => { %>
+            <tr>
+                <td><%= order.order_id %></td>
+                <td><%= order.equipment_name %></td>
+                <td><%= order.start_date %></td>
+                <td><%= order.end_date %></td>
+                <td><%= order.quantity %></td>
+                <td><%= order.total_price %></td>
+                <td><%= order.amount_paid %></td>
+                <td><%= order.payment_date %></td>
+                <td>
+                    <form method="post" action="/receipt/<%= order.order_id %>">
+                        <input type="hidden" name="order_id" value="<%= order.order_id %>">
+                        <button type="submit">View Receipt</button>
+                    </form>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
+
+
+  <script>
+    function showRentForm(equipmentId) {
+      // Set the selected equipment id in the form
+      document.querySelector('#equipmentSelect').value = equipmentId;
+
+      // Show the rent form container
+      document.getElementById('rentFormContainer').style.display = 'block';
+    }
+
+    // Update available quantity and calculate total amount when equipment is selected
+    document.getElementById('equipmentSelect').addEventListener('change', updateQuantityAndTotal);
+
+    // Update total amount when dates are selected
+    document.getElementById('startDateInput').addEventListener('input', updateQuantityAndTotal);
+    document.getElementById('endDateInput').addEventListener('input', updateQuantityAndTotal);
+
+    // Initial update on page load
+    updateQuantityAndTotal();
+
+    function updateQuantityAndTotal() {
+      const selectedOption = document.getElementById('equipmentSelect').options[document.getElementById('equipmentSelect').selectedIndex];
+      const availableQuantity = selectedOption.getAttribute('data-quantity');
+      const rentPricePerDay = selectedOption.getAttribute('data-rent-price');
+      const startDate = new Date(document.getElementById('startDateInput').value);
+      const endDate = new Date(document.getElementById('endDateInput').value);
+
+      // Update available quantity
+      document.getElementById('availableQuantity').textContent = availableQuantity;
+      document.getElementById('quantityInput').max = availableQuantity;
+
+      // Calculate total amount
+      const numberOfDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const totalAmount = (numberOfDays > 0) ? (numberOfDays * rentPricePerDay * document.getElementById('quantityInput').value).toFixed(2) : 0;
+
+      // Update total amount field
+      document.getElementById('totalAmount').value = totalAmount;
+    }
+  </script>
+
+</body>
+
+</html>

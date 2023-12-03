@@ -1,0 +1,92 @@
+<!-- profit-report.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profit Report</title>
+  <style>
+    /* Add this to your <style> tag or a separate CSS file */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Style for the customer report */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  h2, h3 {
+    color: #333;
+  }
+  
+  p {
+    margin-bottom: 8px;
+  }
+
+  </style></head>
+<body>
+  <h2>Profit Report</h2>
+  <a href="/manager-dashboard">Return to Dashboard</a>
+
+  <!-- Form to input date range -->
+  <label for="month">Select Month:</label>
+  <select name="month" id="month" onchange="submitForm()">
+    <option value="2023-01">January 2023</option>
+    <option value="2023-01">January 2023</option>
+    <option value="2023-11">nov 2023</option>
+    <option value="2023-01">January 2023</option>
+
+    <!-- Add more options as needed -->
+  </select>
+
+  <h2>Profit Report - <%= selectedMonth %></h2>
+
+  <% if (profitData.length === 0) { %>
+    <p>No data available for <%= selectedMonth %>.</p>
+  <% } else { %>
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Total Amount</th>
+          <th>Profit (35%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% profitData.forEach(monthlyProfit => { %>
+          <tr>
+            <td><%= monthlyProfit.month %></td>
+            <td><%= monthlyProfit.total_amount %></td>
+            <td><%= monthlyProfit.profit %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  <% } %>
+  <script>
+    // JavaScript to submit the form when the selected month changes
+    function submitForm() {
+      const selectedMonth = document.getElementById('month').value;
+      window.location.href = `/profit-report?month=${selectedMonth}`;
+    }
+  </script>
+  <!-- Display profit data here -->
+
+</body>
+</html>

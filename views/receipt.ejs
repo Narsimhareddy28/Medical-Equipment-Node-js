@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Receipt</title>
+    <!-- Add your CSS styling here -->
+</head>
+<body>
+    <h2>Rental Receipt</h2>
+
+    <!-- Company Information -->
+    <h3>Company Information</h3>
+    <p>Name: <%= orderDetails[0].equipment_manufacturer %></p>
+    <p>Address: 123 Main Street, Missouri, US</p>
+    <!-- Add other company information as needed -->
+
+    <!-- Order Details -->
+    <h3>Order Details</h3>
+    <p>Order ID: <%= orderDetails[0].order_id %></p>
+    <p>Client ID: <%= orderDetails[0].client_id %></p>
+    <p>Client Name: <%= orderDetails[0].client_name %></p>
+    <!-- Add other order details as needed -->
+
+    <!-- Equipment Details -->
+    <h3>Equipment Details</h3>
+    <p>Equipment ID: <%= orderDetails[0].equipment_id %></p>
+    <p>Equipment Name: <%= orderDetails[0].equipment_name %></p>
+    <p>Equipment Description: <%= orderDetails[0].equipment_description %></p>
+    <p>Equipment Manufacturer: <%= orderDetails[0].equipment_manufacturer %></p>
+    <!-- Add other equipment details as needed -->
+
+    <!-- Rental Dates and Price -->
+    <h3>Rental Dates and Price</h3>
+    <p>Start Date: <%= orderDetails[0].start_date %></p>
+    <p>End Date: <%= orderDetails[0].end_date %></p>
+    <p>Total Amount: <%= orderDetails[0].total_price %></p>
+    <p>Amount Paid: <%= orderDetails[0].amount_paid %></p>
+    <p>Pending Amount: <%= (orderDetails[0].total_price - orderDetails[0].amount_paid).toFixed(2) %></p>
+    <!-- Add other rental details as needed -->
+
+    <!-- Payment Instructions -->
+    <h3>Payment Instructions</h3>
+    <p>Make the check payable to:     <p>Name: <%= orderDetails[0].equipment_manufacturer %></p>
+</p>
+    <p>Write your Order ID on the memo line of the check. (Order ID: <%= orderDetails[0].order_id %>)</p>
+    <!-- Add other payment instructions as needed -->
+
+    <!-- Contact Information -->
+    <h3>Contact Information</h3>
+    <p>If you have any questions regarding your payment, feel free to contact us at Phone: 123-456-7890, Email: info@example.com.</p>
+
+    <!-- Download Printable Version link or button -->
+    <!-- Add a link or button to download the printable version of the receipt -->
+
+    <!-- Add your JavaScript code as needed -->
+
+</body>
+</html>

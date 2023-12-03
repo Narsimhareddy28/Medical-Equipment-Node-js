@@ -1,0 +1,82 @@
+<!-- customer-report.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Report</title>
+
+  <style>
+    /* Add this to your <style> tag or a separate CSS file */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  /* Style for the customer report */
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  
+  h2, h3 {
+    color: #333;
+  }
+  
+  p {
+    margin-bottom: 8px;
+  }
+  
+  </style>
+</head>
+<body>
+  <h2>Customer Report</h2>
+  <a href="/manager-dashboard">Return to Dashboard</a>
+
+  <h3>Customer Details</h3>
+  <p>Name: <%= customer.name %></p>
+  <p>Address: <%= customer.address %></p>
+  <!-- Add more details as needed -->
+
+  <h3>Rented Equipment</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Rent Price per Day</th>
+        <th>Quantity</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% equipment.forEach(item => { %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= item.description %></td>
+          <td><%= item.rent_price_per_day %></td>
+          <td><%= item.quantity %></td>
+          <td><%= item.start_date %></td>
+          <td><%= item.end_date %></td>
+          <td><%= item.total_price %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</body>
+</html>

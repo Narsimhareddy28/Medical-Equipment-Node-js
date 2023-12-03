@@ -1,0 +1,67 @@
+<!-- payment-report.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    
+    h2 {
+      color: #333;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+    
+    th {
+      background-color: #f2f2f2;
+    }
+    
+  </style>
+</head>
+<body>
+  <h2>Payment Report</h2>
+  <a href="/manager-dashboard">Return to Dashboard</a>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Order ID</th>
+        <th>Client Name</th>
+        <th>Equipment ID</th>
+        <th>Equipment Name</th>
+        <th>Amount Paid</th>
+        <th>Payment Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Loop through payment data and populate the table rows -->
+      <% payments.forEach(payment => { %>
+        <tr>
+          <td><%= payment.order_id %></td>
+          <td><%= payment.client_name %></td>
+          <td><%= payment.equipment_id %></td>
+          <td><%= payment.equipment_name %></td>
+          <td><%= payment.amount_paid %></td>
+          <td><%= payment.payment_date %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+
+</body>
+</html>

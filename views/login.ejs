@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+</head>
+<body>
+    <form method="post" action="/login">
+        <label for="username">Username:</label>
+        <input type="text" name="username" required>
+    
+        <label for="password">Password:</label>
+        <input type="password" name="password" required>
+    
+        <label for="role">Role:</label>
+        <select name="role" required>
+            <option value="client">Client</option>
+            <option value="manager">Manager</option>
+        </select>
+    
+        <button type="submit">Login</button>
+    </form>
+    
+  <p>Don't have an account? <a href="/register">Register</a></p>
+  <p>Don't have an manager account? <a href="/manager-register">Register</a></p>
+
+</body>
+</html>

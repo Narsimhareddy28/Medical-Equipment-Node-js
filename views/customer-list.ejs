@@ -1,0 +1,64 @@
+<!-- customer-list.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer List</title>
+  <style>
+    /* Add this CSS style in the head of your HTML document or in an external stylesheet */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+a {
+  text-decoration: none;
+  color: #007bff;
+  margin-left: 10px;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+  </style>
+</head>
+<body>
+  <h2>Customer List</h2>
+  <a href="/manager-dashboard">Return to Dashboard</a>
+
+  <ul>
+    <% customers.forEach(customer => { %>
+      <li>
+        <%= customer.name %>
+        <a href="/customer-report/<%= customer.client_id %>">View Reports</a>
+      </li>
+    <% }); %>
+  </ul>
+</body>
+</html>
